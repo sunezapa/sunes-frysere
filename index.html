@@ -28,11 +28,11 @@
   .stat-card.active { background: #1e2d4a; border-color: #2a4a6e; }
   .stat-label { font-size: 10px; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; }
   .stat-val { font-family: 'Courier Prime', monospace; font-size: 26px; font-weight: 700; line-height: 1.1; margin-top: 2px; }
-  .type-chips { display: flex; gap: 6px; padding: 0 16px 12px; overflow-x: auto; scrollbar-width: none; }
-  .type-chip { padding: 5px 11px; font-size: 13px; border-radius: 20px; border: 1px solid #2a4a6e; background: #172642; color: #94a3b8; cursor: pointer; white-space: nowrap; font-weight: 700; }
+  .type-chips { display: flex; gap: 6px; padding: 0 16px 12px; flex-wrap: wrap; }
+  .type-chip { padding: 5px 11px; font-size: 13px; border-radius: 20px; border: 1px solid #2a4a6e; background: #172642; color: #c8daf0; cursor: pointer; white-space: nowrap; font-weight: 700; }
   .type-chip.active { color: #fff; }
   .groupby-btns { display: flex; gap: 6px; padding: 0 16px 16px; }
-  .groupby-btn { padding: 6px 16px; font-size: 13px; background: #2a2010; color: #94a3b8; border: 1px solid #4a3a10; cursor: pointer; letter-spacing: 0.5px; font-weight: 700; border-radius: 10px; }
+  .groupby-btn { padding: 6px 16px; font-size: 13px; background: #2a2010; color: #e8d8b0; border: 1px solid #4a3a10; cursor: pointer; letter-spacing: 0.5px; font-weight: 700; border-radius: 10px; }
   .groupby-btn.active { background: #f59e0b; color: #0a0a00; border-color: #f59e0b; }
 
   .group-header { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: #e8f0f8; border-radius: 12px; border: 1px solid #2a4a6e; color: #0a1628; margin-bottom: 4px; cursor: pointer; font-family: inherit; }
@@ -47,27 +47,37 @@
   .item-type-badge { font-size: 12px; padding: 2px 7px; border-radius: 6px; }
   .item-age { font-size: 13px; }
   .item-min-text { font-size: 11px; font-family: 'Courier Prime', monospace; font-weight: 700; }
-  .item-buy-btn { padding: 2px 9px; font-size: 11px; border-radius: 8px; background: #172642; color: #94a3b8; border: 1px solid #2a4a6e; cursor: pointer; font-family: inherit; white-space: nowrap; }
+  .item-buy-btn { padding: 2px 9px; font-size: 11px; border-radius: 8px; background: rgba(251,191,36,0.1); color: #fcd34d; border: 1px solid rgba(251,191,36,0.3); cursor: pointer; font-family: inherit; white-space: nowrap; }
   .item-buy-btn.active { background: rgba(56,189,248,0.2); color: #38bdf8; border-color: #38bdf8; }
   .item-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; margin-left: 8px; }
   .item-plads-tag { font-family: 'Courier Prime', monospace; font-size: 17px; font-weight: 700; color: #38bdf8; min-width: 32px; text-align: right; }
-  .item-stock { font-family: 'Courier Prime', monospace; font-size: 22px; font-weight: 700; min-width: 28px; text-align: right; }
+  .item-stock { font-family: 'Courier Prime', monospace; font-size: 28px; font-weight: 700; min-width: 36px; text-align: right; cursor: pointer; }
+  .item-stock:hover { color: #38bdf8 !important; }
+  .batch-row { display: flex; gap: 8px; align-items: center; margin-top: 10px; background: #0d1e36; border-radius: 10px; padding: 8px 10px; border: 1px solid #2a4a6e; }
+  .batch-input { width: 64px; font-family: 'Courier Prime', monospace; font-size: 26px; font-weight: 700; background: #172642; color: #f1f5f9; border: 1px solid #38bdf8; border-radius: 8px; text-align: center; padding: 4px 0; outline: none; }
+  .batch-label { font-size: 11px; color: #8aa4c0; flex: 1; }
+  .btn-batch-ok { padding: 8px 16px; background: #38bdf8; color: #fff; font-size: 13px; border-radius: 8px; }
+  .btn-batch-cancel { padding: 8px 12px; background: #172642; color: #94a3b8; font-size: 13px; border-radius: 8px; border: 1px solid #2a4a6e; }
   .btn-sm { padding: 4px 8px; font-size: 11px; background: #172642; color: #94a3b8; border: 1px solid #1e3a5f; }
+  .btn-sm.adjust { background: rgba(52,211,153,0.12); color: #6ee7b7; border-color: rgba(52,211,153,0.3); }
+  .btn-sm.adjust.active { background: rgba(52,211,153,0.25); color: #34d399; border-color: rgba(52,211,153,0.5); }
+  .btn-sm.buy { background: rgba(251,191,36,0.12); color: #fcd34d; border-color: rgba(251,191,36,0.3); }
   .btn-sm.active { background: #38bdf8; color: #fff; border-color: #38bdf8; }
   .adjust-row { display: flex; gap: 8px; align-items: center; margin-top: 10px; }
   .btn-plus { width: 40px; height: 40px; background: rgba(52,211,153,0.15); color: #34d399; border: 1px solid rgba(52,211,153,0.3); display: flex; align-items: center; justify-content: center; font-size: 20px; }
   .btn-minus { width: 40px; height: 40px; background: rgba(248,113,113,0.15); color: #f87171; border: 1px solid rgba(248,113,113,0.3); display: flex; align-items: center; justify-content: center; font-size: 20px; }
-  .btn-min-edit { padding: 6px 10px; font-size: 11px; background: #172642; color: #94a3b8; border: 1px solid #1e3a5f; }
-  .btn-stepper { width: 32px; height: 32px; background: #172642; color: #f1f5f9; border: 1px solid #1e3a5f; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .btn-min-edit { padding: 8px 14px; font-size: 14px; font-weight: 700; background: #172642; color: #f1f5f9; border: 1px solid #38bdf8; font-family: 'Courier Prime', monospace; }
+  .btn-stepper { width: 40px; height: 40px; background: #172642; color: #f1f5f9; border: 1px solid #38bdf8; display: flex; align-items: center; justify-content: center; font-size: 20px; }
 
   .section-pad { padding: 0 16px; }
   .section-note { font-size: 12px; color: #94a3b8; margin-bottom: 12px; }
-  .history-row { padding: 6px 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #162030; }
+  .history-row { padding: 3px 12px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #0e1a2e; min-height: 28px; }
   .history-row.even { background: #111d35; }
   .history-row.odd  { background: #0e1a2e; }
-  .history-name { font-weight: 600; font-size: 14px; }
-  .history-date { font-size: 11px; color: #94a3b8; }
-  .history-amount { font-family: 'Courier Prime', monospace; font-size: 18px; font-weight: 700; }
+  .history-date { font-size: 11px; color: #8ab4d4; white-space: nowrap; flex-shrink: 0; }
+  .history-name { font-weight: 600; font-size: 13px; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .history-plads { font-family: 'Courier Prime', monospace; font-size: 15px; font-weight: 700; color: #38bdf8; flex-shrink: 0; }
+  .history-amount { font-family: 'Courier Prime', monospace; font-size: 18px; font-weight: 700; flex-shrink: 0; min-width: 36px; text-align: right; }
 
   #toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); padding: 10px 20px; border-radius: 12px; font-weight: 600; font-size: 14px; z-index: 2000; box-shadow: 0 8px 30px rgba(0,0,0,0.3); display: none; white-space: nowrap; }
 
@@ -282,6 +292,8 @@ let groupBy = "plads";
 let typeFilter = null;
 let adjustModeId = null;
 let minEditId = null;
+let batchEditId = null;
+let batchValue = 0;
 let moveItemId = null;
 let settingsTab = "generelt";
 let newItemState = { amount: 1, need: 0 };
@@ -506,11 +518,11 @@ function setMinimum(itemId, val) {
   saveState(); render();
 }
 
-function moveItem(sourceId, targetPlads) {
+function moveItem(sourceId, targetPlads, amount) {
   const source = items.find(i => i.id === sourceId);
   if (!source) return;
   const sm = getStockMap();
-  const amount = sm[sourceId] || 0;
+  if (amount === undefined) amount = sm[sourceId] || 0;
   if (amount <= 0) { showToast("Ikke nok på lager", "negative"); return; }
   addTransaction(sourceId, -amount);
   const dest = items.find(i => i.name === source.name && i.plads === targetPlads);
@@ -552,6 +564,41 @@ function submitAddItem() {
   render();
 }
 
+// ── Batch edit ────────────────────────────────────────────
+function openBatch(itemId, currentStock) {
+  if (adjustModeId !== itemId) { adjustModeId = itemId; }
+  batchEditId = itemId;
+  batchValue = currentStock;
+  render();
+  setTimeout(() => {
+    const el = document.getElementById("batch-input-" + itemId);
+    if (el) { el.focus(); el.select(); }
+  }, 50);
+}
+
+function adjustBatch(delta) {
+  batchValue = Math.max(0, batchValue + delta);
+  const el = document.getElementById("batch-input-" + batchEditId);
+  if (el) el.value = batchValue;
+  // opdater diff label
+  render();
+}
+
+function commitBatch(itemId, currentStock) {
+  const newVal = Math.max(0, batchValue);
+  const diff = newVal - currentStock;
+  if (diff !== 0) {
+    addTransaction(itemId, diff);
+  }
+  batchEditId = null;
+  render();
+}
+
+function closeBatch() {
+  batchEditId = null;
+  render();
+}
+
 // ── Toast ──────────────────────────────────────────────────
 let toastTimer = null;
 function showToast(msg, type) {
@@ -569,7 +616,7 @@ function setView(v) {
   view = v; statModal = null;
   document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
   document.getElementById("nav-" + v)?.classList.add("active");
-  adjustModeId = null; minEditId = null;
+  adjustModeId = null; minEditId = null; batchEditId = null;
   render();
 }
 function setStatModal(m) { statModal = statModal === m ? null : m; render(); }
@@ -586,7 +633,7 @@ function render() {
 function renderOverblik() {
   const enriched = getEnrichedItems();
   const search = document.getElementById("search-input")?.value.toLowerCase() || "";
-  const totalItems = enriched.filter(i => i.stock > 0).length;
+  const totalItems = enriched.length;
   const totalStock = enriched.reduce((s,i) => s + i.stock, 0);
   const emptyCount = enriched.filter(i => i.stock === 0).length;
   const needCount  = enriched.filter(i => i.need > 0 && i.stock < i.need).length;
@@ -727,28 +774,37 @@ function renderItemCard(item) {
           ${item.ageDays !== null ? `<span class="item-age" style="color:${col}">⬤ ${ageLabel(item.ageDays)}</span>` : ""}
           <div style="flex:1"></div>
           ${item.need > 0 ? `<span class="item-min-text" style="color:${item.stock<item.need?'#fbbf24':'#94a3b8'}">min ${item.need}</span>` : ""}
+          <button class="btn-sm adjust${isAdjusting?" active":""}" onclick="toggleAdjust('${item.id}')">Juster</button>
           <button class="item-buy-btn${buyActive?' active':''}" onclick="toggleWantToBuy('${item.id}')">${buyActive?'✓ KØB':'KØB'}</button>
         </div>
       </div>
       <div class="item-actions">
         <button class="btn-sm" onclick="openMoveModal('${item.id}')">Flyt</button>
-        <button class="btn-sm${isAdjusting?" active":""}" onclick="toggleAdjust('${item.id}')">Juster</button>
         <span class="item-plads-tag">${item.plads}</span>
-        <span class="item-stock" style="color:${stockCol}">${item.stock}</span>
+        <span class="item-stock" style="color:${stockCol}" onclick="openBatch('${item.id}',${item.stock})" title="Klik for at justere">${item.stock}</span>
       </div>
     </div>`;
 
   if (isAdjusting) {
-    html += `<div class="adjust-row">
-      <button class="btn-minus" onclick="addTransaction('${item.id}',-1)">−</button>
-      <button class="btn-plus" onclick="addTransaction('${item.id}',1)">+</button>
-      <div style="flex:1"></div>
-      <button class="btn-min-edit" onclick="toggleMinEdit('${item.id}')">Min: ${item.need}</button>
-      ${isMinEdit ? `
+    const isBatch = batchEditId === item.id;
+    if (isBatch) {
+      html += `<div class="batch-row">
+        <button class="btn-stepper" onclick="adjustBatch(-1)">−</button>
+        <input class="batch-input" id="batch-input-${item.id}" type="number" value="${batchValue}" oninput="batchValue=Number(this.value)">
+        <button class="btn-stepper" onclick="adjustBatch(1)">+</button>
+        <span class="batch-label">stk på lager<br><span style="color:#94a3b8;font-size:10px">Diff: ${batchValue - item.stock >= 0 ? "+" : ""}${batchValue - item.stock}</span></span>
+        <button class="btn-batch-ok" onclick="commitBatch('${item.id}',${item.stock})">OK</button>
+        <button class="btn-batch-cancel" onclick="closeBatch()">✕</button>
+      </div>`;
+    } else {
+      html += `<div class="adjust-row">
+        <span style="font-size:11px;color:#8aa4c0;font-weight:600;text-transform:uppercase;letter-spacing:0.4px;align-self:center">Min:</span>
         <button class="btn-stepper" onclick="setMinimum('${item.id}',${item.need-1})">−</button>
+        <span style="font-family:'Courier Prime',monospace;font-size:20px;font-weight:700;color:#f1f5f9;min-width:28px;text-align:center">${item.need}</span>
         <button class="btn-stepper" onclick="setMinimum('${item.id}',${item.need+1})">+</button>
-      ` : ""}
-    </div>`;
+        <span style="font-size:10px;color:#475569;align-self:center">Klik på antal for at justere beholdning</span>
+      </div>`;
+    }
   }
   html += `</div>`;
   return html;
@@ -801,18 +857,17 @@ function renderNeed() {
 }
 
 function renderHistory() {
-  const recent = [...inventory].sort((a,b) => new Date(b.dateTime) - new Date(a.dateTime)).slice(0,30);
-  let html = `<div class="section-pad"><div class="section-note">Seneste 30 transaktioner</div>`;
+  const recent = [...inventory].sort((a,b) => new Date(b.dateTime) - new Date(a.dateTime)).slice(0,50);
+  let html = `<div class="section-pad"><div class="section-note">Seneste 50 transaktioner</div>`;
   recent.forEach((tx, idx) => {
     const item = items.find(i => i.id === tx.itemId);
     const name = item?.name || "Ukendt";
     const plads = item?.plads || "";
     html += `<div class="history-row ${idx%2===0?'even':'odd'}">
-      <div>
-        <div class="history-name">${name}</div>
-        <div class="history-date">${formatDate(tx.dateTime)}${plads ? ` · <span style="color:#38bdf8;font-family:'Courier Prime',monospace;font-weight:700">${plads}</span>` : ""}</div>
-      </div>
-      <div class="history-amount" style="color:${tx.amount>0?"#34d399":"#f87171"}">${tx.amount>0?"+":""}${tx.amount}</div>
+      <span class="history-date">${formatDateShort(tx.dateTime)}</span>
+      <span class="history-name">${name}</span>
+      ${plads ? `<span class="history-plads">${plads}</span>` : ""}
+      <span class="history-amount" style="color:${tx.amount>0?"#34d399":"#f87171"}">${tx.amount>0?"+":""}${tx.amount}</span>
     </div>`;
   });
   html += `</div>`;
@@ -827,7 +882,7 @@ function toggleWantToBuy(itemId) {
   postToSheet("updateItem", { id: itemId, wantToBuy: items.find(i=>i.id===itemId)?.wantToBuy });
   saveState(); render();
 }
-function toggleAdjust(id) { adjustModeId = adjustModeId === id ? null : id; minEditId = null; render(); }
+function toggleAdjust(id) { adjustModeId = adjustModeId === id ? null : id; minEditId = null; batchEditId = null; render(); }
 function toggleMinEdit(id) { minEditId = minEditId === id ? null : id; render(); }
 function toggleGroup(key) {
   const el = document.getElementById("group-" + key);
@@ -841,7 +896,7 @@ function openMoveModal(itemId) {
   if (!item) return;
   document.getElementById("move-subtitle").textContent = `${item.name} · nu på ${item.plads} · ${item.stock} stk`;
   const grid = document.getElementById("move-grid");
-  grid.innerHTML = locations.map(loc => `<button class="move-btn${loc===item.plads?" current":""}" ${loc===item.plads?"disabled":""} onclick="moveItem('${itemId}','${loc}')">${loc}</button>`).join("");
+  grid.innerHTML = locations.map(loc => `<button class="move-btn${loc===item.plads?" current":""}" ${loc===item.plads?"disabled":""} onclick="moveItem('${itemId}','${loc}',${item.stock})">${loc}</button>`).join("");
   document.getElementById("modal-move").style.display = "flex";
 }
 function closeMoveModal() { document.getElementById("modal-move").style.display = "none"; moveItemId = null; }
@@ -977,8 +1032,10 @@ function updateThreshold(key, delta) {
   const months = Math.max(1, Math.round(ageThresholds[key] / 30) + delta);
   const days = months * 30;
   ageThresholds = { ...ageThresholds, [key]: days };
-  if (ageThresholds.green >= ageThresholds.yellow) ageThresholds.yellow = ageThresholds.green + 30;
-  if (ageThresholds.yellow >= ageThresholds.orange) ageThresholds.orange = ageThresholds.yellow + 30;
+  if (key==="green"  && ageThresholds.green  >= ageThresholds.yellow) ageThresholds.yellow = ageThresholds.green + 30;
+  if (key==="yellow" && ageThresholds.yellow >= ageThresholds.orange) ageThresholds.orange = ageThresholds.yellow + 30;
+  if (key==="yellow" && ageThresholds.yellow <= ageThresholds.green)  ageThresholds.green  = ageThresholds.yellow - 30;
+  if (key==="orange" && ageThresholds.orange <= ageThresholds.yellow) ageThresholds.yellow = ageThresholds.orange - 30;
   ls.set("sf_agethresh", ageThresholds);
   postToSheet("upsertSetting", { key: "ageGreen",  value: ageThresholds.green });
   postToSheet("upsertSetting", { key: "ageYellow", value: ageThresholds.yellow });
