@@ -426,6 +426,13 @@ function formatDateShort(d) {
   return `${dt.getDate()}/${dt.getMonth()+1}-${dt.getFullYear()}`;
 }
 
+// Datoformat som Google Sheets bruger: M/D/YYYY HH:MM:SS
+// Matcher det format AppSheet og Sheets selv skriver i DateTime-kolonnen.
+function nowSheetsFormat() {
+  const d = new Date();
+  return `${d.getMonth()+1}/${d.getDate()}/${d.getFullYear()} ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}:${String(d.getSeconds()).padStart(2,"0")}`;
+}
+
 function generateId() {
   return typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID()
     : Math.random().toString(36).substring(2,10) + Date.now().toString(36);
@@ -503,7 +510,7 @@ async function flushQueue() {
 // ── Actions ────────────────────────────────────────────────
 function addTransaction(itemId, amount) {
   if (amount === 0) return;
-  const inv = { id: generateId(), itemId, dateTime: new Date().toISOString(), amount };
+  const inv = { id: generateId(), itemId, dateTime: nowSheetsFormat(), amount };
   inventory.push(inv);
   postToSheet("appendInventory", { id: inv.id, itemId: inv.itemId, dateTime: inv.dateTime, amount: inv.amount });
   const item = items.find(i => i.id === itemId);
@@ -533,7 +540,7 @@ function moveItem(sourceId, targetPlads, amount) {
     const ni = { id: newId, name: source.name, plads: targetPlads, need: 0, wantToBuy: false, type: source.type };
     items.push(ni);
     postToSheet("appendItem", { id: ni.id, name: ni.name, plads: ni.plads, need: 0, type: ni.type });
-    const inv = { id: generateId(), itemId: newId, dateTime: new Date().toISOString(), amount };
+    const inv = { id: generateId(), itemId: newId, dateTime: nowSheetsFormat(), amount };
     inventory.push(inv);
     postToSheet("appendInventory", { id: inv.id, itemId: inv.itemId, dateTime: inv.dateTime, amount: inv.amount });
   }
@@ -554,7 +561,7 @@ function submitAddItem() {
   items.push(item);
   postToSheet("appendItem", { id: item.id, name: item.name, plads: item.plads, need: item.need, type: item.type });
   if (amount > 0) {
-    const inv = { id: generateId(), itemId, dateTime: new Date().toISOString(), amount };
+    const inv = { id: generateId(), itemId, dateTime: nowSheetsFormat(), amount };
     inventory.push(inv);
     postToSheet("appendInventory", { id: inv.id, itemId: inv.itemId, dateTime: inv.dateTime, amount: inv.amount });
   }
