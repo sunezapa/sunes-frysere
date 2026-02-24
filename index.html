@@ -6,9 +6,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <title>Sunes Frysere</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; font-feature-settings: "zero" 0; font-variant-numeric: normal; }
   body { background: #0a1628; color: #f1f5f9; font-family: 'DM Sans', sans-serif; max-width: 480px; margin: 0 auto; min-height: 100vh; padding-bottom: 90px; }
   button { border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; font-weight: 600; transition: all 0.15s ease; border-radius: 10px; }
   input, select { font-family: 'DM Sans', sans-serif; }
@@ -23,30 +23,35 @@
   #sync-error { font-size: 11px; color: #f87171; margin-top: 4px; }
 
   #content { padding: 12px 0; }
-  .stat-chips { display: flex; gap: 8px; padding: 0 16px 12px; flex-wrap: wrap; }
-  .chip { background: #172642; border-radius: 10px; padding: 6px 12px; border: 1px solid #1e3a5f; font-size: 11px; color: #94a3b8; }
-  .chip span { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700; margin-left: 4px; }
+  .stat-row { display: flex; gap: 6px; padding: 0 16px 12px; }
+  .stat-card { flex: 1; background: #111d35; border-radius: 12px; padding: 8px 10px; border: 1px solid #1e3a5f; cursor: pointer; text-align: left; font-family: inherit; }
+  .stat-card.active { background: #1e2d4a; border-color: #2a4a6e; }
+  .stat-label { font-size: 10px; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; }
+  .stat-val { font-family: 'Courier Prime', monospace; font-size: 26px; font-weight: 700; line-height: 1.1; margin-top: 2px; }
   .type-chips { display: flex; gap: 6px; padding: 0 16px 12px; overflow-x: auto; scrollbar-width: none; }
-  .type-chip { padding: 4px 10px; font-size: 11px; border-radius: 20px; border: 1px solid #1e3a5f; background: #172642; color: #94a3b8; cursor: pointer; white-space: nowrap; font-weight: 600; }
+  .type-chip { padding: 5px 11px; font-size: 13px; border-radius: 20px; border: 1px solid #2a4a6e; background: #172642; color: #94a3b8; cursor: pointer; white-space: nowrap; font-weight: 700; }
   .type-chip.active { color: #fff; }
   .groupby-btns { display: flex; gap: 6px; padding: 0 16px 16px; }
-  .groupby-btn { padding: 5px 12px; font-size: 12px; background: #172642; color: #94a3b8; border: 1px solid #1e3a5f; cursor: pointer; }
-  .groupby-btn.active { background: #38bdf8; color: #fff; border-color: #38bdf8; }
+  .groupby-btn { padding: 6px 16px; font-size: 13px; background: #2a2010; color: #94a3b8; border: 1px solid #4a3a10; cursor: pointer; letter-spacing: 0.5px; font-weight: 700; border-radius: 10px; }
+  .groupby-btn.active { background: #f59e0b; color: #0a0a00; border-color: #f59e0b; }
 
-  .group-header { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #111d35; border-radius: 12px; border: 1px solid #1e3a5f; color: #f1f5f9; margin-bottom: 6px; font-size: 13px; }
-  .group-key { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #38bdf8; }
-  .group-meta { font-size: 11px; color: #94a3b8; margin-left: 8px; }
+  .group-header { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: #e8f0f8; border-radius: 12px; border: 1px solid #2a4a6e; color: #0a1628; margin-bottom: 4px; cursor: pointer; font-family: inherit; }
+  .group-key { font-family: 'Courier Prime', monospace; font-weight: 700; font-size: 20px; color: #0d2a4a; }
+  .group-meta { font-size: 13px; color: #3a5a7a; font-weight: 600; margin-left: 8px; }
 
-  .item-card { background: #111d35; border-radius: 12px; padding: 12px 14px; margin-bottom: 8px; border: 1px solid #1e3a5f; }
+  .item-card { background: #111d35; border-radius: 12px; padding: 8px 12px; margin-bottom: 4px; border: 1px solid #1e3a5f; }
   .item-row { display: flex; justify-content: space-between; align-items: flex-start; }
-  .item-name { font-weight: 700; font-size: 15px; }
-  .item-meta { display: flex; gap: 8px; align-items: center; margin-top: 2px; flex-wrap: wrap; }
-  .item-plads { font-size: 11px; color: #38bdf8; font-family: 'JetBrains Mono', monospace; font-weight: 600; }
-  .item-type-badge { font-size: 10px; padding: 1px 6px; border-radius: 6px; }
-  .item-age { font-size: 11px; }
-  .item-min-badge { font-size: 10px; background: rgba(251,191,36,0.2); color: #fbbf24; padding: 1px 6px; border-radius: 6px; border: 1px solid rgba(251,191,36,0.3); }
+  .item-name { font-weight: 700; font-size: 19px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .item-meta { display: flex; gap: 8px; align-items: center; margin-top: 3px; flex-wrap: nowrap; }
+  .item-plads { font-size: 12px; color: #38bdf8; font-family: 'Courier Prime', monospace; font-weight: 700; }
+  .item-type-badge { font-size: 12px; padding: 2px 7px; border-radius: 6px; }
+  .item-age { font-size: 13px; }
+  .item-min-text { font-size: 11px; font-family: 'Courier Prime', monospace; font-weight: 700; }
+  .item-buy-btn { padding: 2px 9px; font-size: 11px; border-radius: 8px; background: #172642; color: #94a3b8; border: 1px solid #2a4a6e; cursor: pointer; font-family: inherit; white-space: nowrap; }
+  .item-buy-btn.active { background: rgba(56,189,248,0.2); color: #38bdf8; border-color: #38bdf8; }
   .item-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; margin-left: 8px; }
-  .item-stock { font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 700; min-width: 32px; text-align: right; }
+  .item-plads-tag { font-family: 'Courier Prime', monospace; font-size: 17px; font-weight: 700; color: #38bdf8; min-width: 32px; text-align: right; }
+  .item-stock { font-family: 'Courier Prime', monospace; font-size: 22px; font-weight: 700; min-width: 28px; text-align: right; }
   .btn-sm { padding: 4px 8px; font-size: 11px; background: #172642; color: #94a3b8; border: 1px solid #1e3a5f; }
   .btn-sm.active { background: #38bdf8; color: #fff; border-color: #38bdf8; }
   .adjust-row { display: flex; gap: 8px; align-items: center; margin-top: 10px; }
@@ -57,10 +62,12 @@
 
   .section-pad { padding: 0 16px; }
   .section-note { font-size: 12px; color: #94a3b8; margin-bottom: 12px; }
-  .history-row { background: #111d35; border-radius: 10px; padding: 10px 14px; margin-bottom: 6px; border: 1px solid #1e3a5f; display: flex; justify-content: space-between; align-items: center; }
+  .history-row { padding: 6px 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #162030; }
+  .history-row.even { background: #111d35; }
+  .history-row.odd  { background: #0e1a2e; }
   .history-name { font-weight: 600; font-size: 14px; }
   .history-date { font-size: 11px; color: #94a3b8; }
-  .history-amount { font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700; }
+  .history-amount { font-family: 'Courier Prime', monospace; font-size: 18px; font-weight: 700; }
 
   #toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); padding: 10px 20px; border-radius: 12px; font-weight: 600; font-size: 14px; z-index: 2000; box-shadow: 0 8px 30px rgba(0,0,0,0.3); display: none; white-space: nowrap; }
 
@@ -69,8 +76,8 @@
   .nav-btn.active { color: #38bdf8; }
   .nav-btn svg { width: 20px; height: 20px; }
 
-  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); display: flex; align-items: flex-end; justify-content: center; z-index: 1000; backdrop-filter: blur(4px); }
-  .modal-box { background: #111d35; border-radius: 20px 20px 0 0; padding: 20px 20px 36px; width: 100%; max-width: 480px; border: 1px solid #1e3a5f; border-bottom: none; max-height: 85vh; overflow-y: auto; }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); display: flex; align-items: flex-start; justify-content: center; z-index: 1000; backdrop-filter: blur(4px); }
+  .modal-box { background: #111d35; border-radius: 0 0 20px 20px; padding: 20px 20px 28px; width: 100%; max-width: 480px; border: 1px solid #1e3a5f; border-top: none; max-height: 85vh; overflow-y: auto; }
   .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
   .modal-title { font-size: 17px; font-weight: 700; }
   .btn-close { background: none; border: none; color: #94a3b8; font-size: 20px; cursor: pointer; padding: 4px; line-height: 1; border-radius: 6px; }
@@ -84,7 +91,7 @@
   .btn-primary { padding: 10px 16px; background: #38bdf8; color: #fff; font-size: 13px; border-radius: 8px; }
   .settings-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
   .settings-table td { padding: 8px 0; }
-  .settings-table .td-key { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #38bdf8; }
+  .settings-table .td-key { font-family: "Courier Prime", monospace; font-size: 14px; color: #38bdf8; }
   .settings-table .td-count { font-size: 12px; color: #94a3b8; }
   .btn-del { background: none; border: none; font-size: 14px; cursor: pointer; padding: 4px 8px; }
   .add-row { display: flex; gap: 8px; }
@@ -92,7 +99,7 @@
   .btn-add { padding: 9px 14px; background: #38bdf8; color: #fff; border-radius: 8px; font-size: 13px; }
 
   .move-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
-  .move-btn { padding: 12px 8px; border-radius: 10px; font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace; background: #172642; color: #a8c4e0; border: 1px solid #2a4a6e; cursor: pointer; }
+  .move-btn { padding: 12px 8px; border-radius: 10px; font-size: 14px; font-weight: 700; font-family: "Courier Prime", monospace; background: #172642; color: #a8c4e0; border: 1px solid #2a4a6e; cursor: pointer; }
   .move-btn.current { background: rgba(56,189,248,0.2); color: #7dd3fc; border-color: rgba(56,189,248,0.5); opacity: 0.5; cursor: default; }
 
   .add-item-form { display: flex; flex-direction: column; gap: 14px; }
@@ -101,7 +108,7 @@
   .form-select { width: 100%; padding: 10px 14px; border-radius: 10px; border: 1px solid #1e3a5f; background: #172642; color: #f1f5f9; font-size: 14px; outline: none; }
   .form-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   .stepper { display: flex; align-items: center; gap: 8px; }
-  .stepper-val { font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 700; min-width: 32px; text-align: center; }
+  .stepper-val { font-family: "Courier Prime", monospace; font-size: 20px; font-weight: 700; min-width: 32px; text-align: center; }
   .stepper-btn { width: 36px; height: 36px; border-radius: 10px; background: #172642; color: #f1f5f9; border: 1px solid #1e3a5f; font-size: 18px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
   .btn-submit { padding: 14px 20px; font-size: 15px; border-radius: 10px; width: 100%; margin-top: 4px; }
   .btn-submit.ready { background: linear-gradient(135deg, #38bdf8, #818cf8); color: #fff; box-shadow: 0 4px 15px rgba(56,189,248,0.25); }
@@ -120,7 +127,7 @@
   .age-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
   .age-label { flex: 1; font-size: 13px; }
   .age-stepper { display: flex; align-items: center; gap: 6px; }
-  .age-val { font-family: 'JetBrains Mono', monospace; font-size: 13px; min-width: 48px; text-align: center; }
+  .age-val { font-family: "Courier Prime", monospace; font-size: 13px; min-width: 48px; text-align: center; }
 
   .sync-divider { border-top: 1px solid #1e3a5f; padding-top: 16px; margin-top: 4px; }
 </style>
@@ -129,7 +136,7 @@
 
 <div id="header">
   <div id="header-top">
-    <div id="header-title">
+    <div id="header-title" style="cursor:pointer" onclick="setView('overblik')">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round">
         <line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/>
         <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/><line x1="19.07" y1="4.93" x2="4.93" y2="19.07"/>
@@ -278,6 +285,7 @@ let minEditId = null;
 let moveItemId = null;
 let settingsTab = "generelt";
 let newItemState = { amount: 1, need: 0 };
+let statModal = null;
 
 const TYPE_COLORS = {
   "BÆR":"#a855f7","Færdig":"#f97316","PÅLÆG":"#ec4899",
@@ -558,12 +566,13 @@ function showToast(msg, type) {
 
 // ── View ───────────────────────────────────────────────────
 function setView(v) {
-  view = v;
+  view = v; statModal = null;
   document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
   document.getElementById("nav-" + v)?.classList.add("active");
   adjustModeId = null; minEditId = null;
   render();
 }
+function setStatModal(m) { statModal = statModal === m ? null : m; render(); }
 
 // ── Render ─────────────────────────────────────────────────
 function render() {
@@ -577,55 +586,126 @@ function render() {
 function renderOverblik() {
   const enriched = getEnrichedItems();
   const search = document.getElementById("search-input")?.value.toLowerCase() || "";
+  const totalItems = enriched.filter(i => i.stock > 0).length;
   const totalStock = enriched.reduce((s,i) => s + i.stock, 0);
-  const emptyItems = enriched.filter(i => i.stock <= 0).length;
-  const needItems  = enriched.filter(i => i.need > 0 && i.stock < i.need).length;
+  const emptyCount = enriched.filter(i => i.stock === 0).length;
+  const needCount  = enriched.filter(i => i.need > 0 && i.stock < i.need).length;
 
-  let source = enriched.filter(i => i.stock > 0);
-  if (search) source = source.filter(i => i.name.toLowerCase().includes(search) || i.plads.toLowerCase().includes(search) || i.type.toLowerCase().includes(search));
-  if (typeFilter) source = source.filter(i => i.type === typeFilter);
-
-  let html = `<div class="stat-chips">
-    <div class="chip">Varer <span style="color:#38bdf8">${enriched.length}</span></div>
-    <div class="chip">Stk total <span style="color:#34d399">${totalStock}</span></div>
-    <div class="chip">Tomme <span style="color:#94a3b8">${emptyItems}</span></div>
-    <div class="chip">Indkøb <span style="color:${needItems>0?"#fbbf24":"#94a3b8"}">${needItems}</span></div>
+  // Stat-kort (4 på én linje)
+  let html = `<div class="stat-row">
+    <button class="stat-card" onclick="setView('overblik')" style="cursor:pointer;border:none">
+      <div class="stat-label">Varer</div>
+      <div class="stat-val" style="color:#38bdf8">${totalItems}</div>
+    </button>
+    <button class="stat-card" onclick="setView('history')" style="cursor:pointer;border:none">
+      <div class="stat-label">Stk</div>
+      <div class="stat-val" style="color:#34d399">${totalStock}</div>
+    </button>
+    <button class="stat-card${statModal==='tomme'?' active':''}" onclick="setStatModal('tomme')">
+      <div class="stat-label">Tomme</div>
+      <div class="stat-val" style="color:${emptyCount>0?'#f87171':'#94a3b8'}">${emptyCount}</div>
+    </button>
+    <button class="stat-card${statModal==='mangler'?' active':''}" onclick="setStatModal('mangler')">
+      <div class="stat-label">Mangler</div>
+      <div class="stat-val" style="color:${needCount>0?'#fbbf24':'#94a3b8'}">${needCount}</div>
+    </button>
   </div>`;
 
-  html += `<div class="type-chips"><button class="type-chip${!typeFilter?" active":""}" style="${!typeFilter?"background:#38bdf8;color:#fff;border-color:#38bdf8":""}" onclick="setTypeFilter(null)">Alle</button>`;
-  types.forEach(t => {
-    const col = TYPE_COLORS[t] || "#6b7280";
-    const isActive = typeFilter === t;
-    html += `<button class="type-chip${isActive?" active":""}" style="${isActive?`background:${col};border-color:${col}`:"border-color:#2a4a6e"}" onclick="setTypeFilter('${t}')">${t}</button>`;
-  });
+  // Filter-chips: plads-chips normalt, type-chips ved groupBy=type
+  let source = enriched.filter(i => i.stock > 0);
+  if (search) source = source.filter(i => i.name.toLowerCase().includes(search) || i.plads.toLowerCase().includes(search) || i.type.toLowerCase().includes(search));
+
+  const usedLocations = [...new Set(source.map(i => i.plads))].sort();
+  html += `<div class="type-chips"><button class="type-chip${!typeFilter?' active':''}" style="${!typeFilter?'background:#38bdf8;color:#0a1628;border-color:#38bdf8':''}" onclick="setTypeFilter(null)">Alle</button>`;
+  if (groupBy === "type") {
+    types.forEach(t => {
+      const col = TYPE_COLORS[t] || "#6b7280";
+      const isActive = typeFilter === t;
+      html += `<button class="type-chip${isActive?' active':''}" style="${isActive?`background:${col};border-color:${col}`:'border-color:#2a4a6e'}" onclick="setTypeFilter('${t}')">${t}</button>`;
+    });
+  } else {
+    usedLocations.forEach(loc => {
+      const isActive = typeFilter === loc;
+      html += `<button class="type-chip${isActive?' active':''}" style="${isActive?'background:#38bdf8;color:#0a1628;border-color:#38bdf8':'border-color:#2a4a6e;font-family:Courier Prime,monospace'}" onclick="setTypeFilter('${loc}')">${loc}</button>`;
+    });
+  }
   html += `</div>`;
 
   html += `<div class="groupby-btns">
-    <button class="groupby-btn${groupBy==="plads"?" active":""}" onclick="setGroupBy('plads')">Plads</button>
-    <button class="groupby-btn${groupBy==="type"?" active":""}" onclick="setGroupBy('type')">Type</button>
-    <button class="groupby-btn${groupBy==="name"?" active":""}" onclick="setGroupBy('name')">Navn</button>
+    <button class="groupby-btn${groupBy==='plads'?' active':''}" onclick="setGroupBy('plads')">PLADS</button>
+    <button class="groupby-btn${groupBy==='type'?' active':''}" onclick="setGroupBy('type')">TYPE</button>
+    <button class="groupby-btn${groupBy==='name'?' active':''}" onclick="setGroupBy('name')">NAVN</button>
   </div>`;
 
+  // Vareliste eller stat-modal-liste
   html += `<div class="section-pad">`;
-  if (source.length === 0) { html += `<div class="empty-state">Ingen varer på lager</div>`; }
-  else if (groupBy === "name") {
-    source.sort((a,b) => a.name.localeCompare(b.name, "da"));
-    source.forEach(item => { html += renderItemCard(item); });
-  } else {
-    const groups = {};
-    source.forEach(item => { const k = groupBy === "plads" ? item.plads : item.type; if (!groups[k]) groups[k] = []; groups[k].push(item); });
-    Object.entries(groups).sort(([a],[b]) => a.localeCompare(b,"da")).forEach(([key, arr]) => {
-      const col = groupBy === "type" ? (TYPE_COLORS[key] || "#6b7280") : "#38bdf8";
-      const total = arr.reduce((s,i) => s+i.stock, 0);
-      html += `<button class="group-header" onclick="toggleGroup('${key}')">
-        <div><span class="group-key" style="color:${col}">${key}</span><span class="group-meta">${arr.length} varer · ${total} stk</span></div>
-        <span id="chevron-${key}" style="transition:transform 0.2s">▼</span>
-      </button>
-      <div id="group-${key}">`;
-      arr.sort((a,b) => a.name.localeCompare(b.name,"da")).forEach(item => { html += renderItemCard(item); });
-      html += `</div>`;
+
+  if (statModal === 'tomme') {
+    const tomme = enriched.filter(i => i.stock === 0);
+    html += `<div style="background:#0d1930;border-radius:12px;border:1px solid #2a4a6e;overflow:hidden">
+      <div style="padding:10px 14px;display:flex;justify-content:space-between;align-items:center;${tomme.length>0?'border-bottom:1px solid #1e3a5f':''}">
+        <span style="font-size:12px;font-weight:700;color:#f87171">Tomme varer (${tomme.length})</span>
+        <button onclick="setStatModal(null)" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:16px;padding:2px 6px">✕</button>
+      </div>`;
+    tomme.forEach(item => {
+      html += `<div style="padding:10px 14px;border-bottom:1px solid #1a2d4a;display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-weight:700;font-size:15px">${item.name}</div>
+          <div style="font-size:12px;color:#38bdf8;font-family:'Courier Prime',monospace;font-weight:700">${item.plads}</div>
+        </div>
+        <div style="font-size:20px;font-weight:700;color:#f87171">0</div>
+      </div>`;
     });
+    html += `</div>`;
+
+  } else if (statModal === 'mangler') {
+    const mangler = enriched.filter(i => i.need > 0 && i.stock < i.need);
+    html += `<div style="background:#0d1930;border-radius:12px;border:1px solid #2a4a6e;overflow:hidden">
+      <div style="padding:10px 14px;display:flex;justify-content:space-between;align-items:center;${mangler.length>0?'border-bottom:1px solid #1e3a5f':''}">
+        <span style="font-size:12px;font-weight:700;color:#fbbf24">Mangler (${mangler.length})</span>
+        <button onclick="setStatModal(null)" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:16px;padding:2px 6px">✕</button>
+      </div>`;
+    mangler.forEach(item => {
+      html += `<div style="padding:10px 14px;border-bottom:1px solid #1a2d4a;display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-weight:700;font-size:15px">${item.name}</div>
+          <div style="font-size:12px;color:#38bdf8;font-family:'Courier Prime',monospace;font-weight:700">${item.plads}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-family:'Courier Prime',monospace;font-size:20px;font-weight:700;color:#fbbf24">${item.stock}</div>
+          <div style="font-size:11px;color:#94a3b8">min ${item.need}</div>
+        </div>
+      </div>`;
+    });
+    html += `</div>`;
+
+  } else {
+    // Normal vareliste
+    if (typeFilter) source = source.filter(i => groupBy === "type" ? i.type === typeFilter : i.plads === typeFilter);
+    if (source.length === 0) { html += `<div class="empty-state">Ingen varer på lager</div>`; }
+    else if (groupBy === "name") {
+      source.sort((a,b) => a.name.localeCompare(b.name, "da"));
+      source.forEach(item => { html += renderItemCard(item); });
+    } else {
+      const groups = {};
+      source.forEach(item => { const k = groupBy === "plads" ? item.plads : item.type; if (!groups[k]) groups[k] = []; groups[k].push(item); });
+      Object.entries(groups).sort(([a],[b]) => a.localeCompare(b,"da")).forEach(([key, arr]) => {
+        const col = groupBy === "type" ? (TYPE_COLORS[key] || "#6b7280") : "#0d2a4a";
+        const total = arr.reduce((s,i) => s+i.stock, 0);
+        html += `<button class="group-header" onclick="toggleGroup('${key}')">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span class="group-key" style="color:${col}">${key}</span>
+            <span class="group-meta">${arr.length} varer · ${total} stk</span>
+          </div>
+          <span id="chevron-${key}" style="transition:transform 0.2s;color:#3a5a7a">▼</span>
+        </button>
+        <div id="group-${key}">`;
+        arr.sort((a,b) => a.name.localeCompare(b.name,"da")).forEach(item => { html += renderItemCard(item); });
+        html += `</div>`;
+      });
+    }
   }
+
   html += `</div>`;
   return html;
 }
@@ -636,23 +716,24 @@ function renderItemCard(item) {
   const col = item.ageDays !== null ? ageColor(item.ageDays) : "#94a3b8";
   const typeCol = TYPE_COLORS[item.type] || "#6b7280";
   const stockCol = item.stock <= 0 ? "#f87171" : "#f1f5f9";
+  const buyActive = item.wantToBuy;
 
   let html = `<div class="item-card">
     <div class="item-row">
       <div style="flex:1;min-width:0">
-        <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px">
-          <span class="item-name">${item.name}</span>
-          ${item.need > 0 && item.stock < item.need ? `<span class="item-min-badge">min ${item.need}</span>` : ""}
-        </div>
+        <div style="margin-bottom:3px"><span class="item-name">${item.name}</span></div>
         <div class="item-meta">
-          <span class="item-plads">${item.plads}</span>
           <span class="item-type-badge" style="color:${typeCol};background:${typeCol}22">${item.type}</span>
           ${item.ageDays !== null ? `<span class="item-age" style="color:${col}">⬤ ${ageLabel(item.ageDays)}</span>` : ""}
+          <div style="flex:1"></div>
+          ${item.need > 0 ? `<span class="item-min-text" style="color:${item.stock<item.need?'#fbbf24':'#94a3b8'}">min ${item.need}</span>` : ""}
+          <button class="item-buy-btn${buyActive?' active':''}" onclick="toggleWantToBuy('${item.id}')">${buyActive?'✓ KØB':'KØB'}</button>
         </div>
       </div>
       <div class="item-actions">
         <button class="btn-sm" onclick="openMoveModal('${item.id}')">Flyt</button>
         <button class="btn-sm${isAdjusting?" active":""}" onclick="toggleAdjust('${item.id}')">Juster</button>
+        <span class="item-plads-tag">${item.plads}</span>
         <span class="item-stock" style="color:${stockCol}">${item.stock}</span>
       </div>
     </div>`;
@@ -678,15 +759,17 @@ function renderOldest() {
     .sort((a,b) => b.ageDays - a.ageDays);
   let html = `<div class="section-pad"><div class="section-note">Ældste varer øverst — FIFO</div>`;
   enriched.forEach(item => {
-    html += `<div style="background:#111d35;border-radius:12px;padding:12px 14px;margin-bottom:8px;border:1px solid #1e3a5f;display:flex;justify-content:space-between;align-items:center">
-      <div>
-        <div style="font-weight:700;font-size:15px">${item.name}</div>
-        <div style="font-size:11px;color:#38bdf8;font-family:'JetBrains Mono',monospace">${item.plads}</div>
-      </div>
-      <div style="text-align:right">
-        <div style="font-size:13px;color:${ageColor(item.ageDays)};font-weight:600">${ageLabel(item.ageDays)}</div>
-        <div style="font-size:11px;color:#94a3b8">${formatDateShort(item.oldestDate)}</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700">${item.stock}</div>
+    html += `<div style="background:#111d35;border-radius:12px;padding:8px 12px;margin-bottom:4px;border:1px solid #1e3a5f">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:700;font-size:17px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:3px">${item.name}</div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <span style="font-size:12px;color:#38bdf8;font-family:'Courier Prime',monospace;font-weight:700">${item.plads}</span>
+            <span style="font-size:13px;color:${ageColor(item.ageDays)};font-weight:600">⬤ ${ageLabel(item.ageDays)}</span>
+            <span style="font-size:11px;color:#94a3b8">${formatDateShort(item.oldestDate)}</span>
+          </div>
+        </div>
+        <div style="font-family:'Courier Prime',monospace;font-size:22px;font-weight:700;margin-left:12px;flex-shrink:0">${item.stock}</div>
       </div>
     </div>`;
   });
@@ -695,20 +778,20 @@ function renderOldest() {
 }
 
 function renderNeed() {
-  const enriched = getEnrichedItems().filter(i => i.need > 0 || i.wantToBuy);
-  let html = `<div class="section-pad"><div class="section-note">Varer med minimum eller indkøbsmærke</div>`;
-  if (enriched.length === 0) html += `<div class="empty-state">Ingen varer markeret til indkøb</div>`;
+  const enriched = getEnrichedItems().filter(i => i.wantToBuy || (i.need > 0 && i.stock < i.need));
+  let html = `<div class="section-pad"><div class="section-note">Manuelt markerede + varer under minimum</div>`;
+  if (enriched.length === 0) html += `<div class="empty-state">Ingen varer til indkøb</div>`;
   enriched.forEach(item => {
     const below = item.need > 0 && item.stock < item.need;
-    html += `<div class="need-card${below?" below-min":""}">
+    html += `<div class="need-card${below?' below-min':''}">
       <div style="display:flex;justify-content:space-between;align-items:center">
-        <div>
-          <div style="font-weight:700;font-size:15px">${item.name}</div>
-          <div style="font-size:11px;color:#38bdf8;font-family:'JetBrains Mono',monospace">${item.plads} · ${item.type}</div>
-          ${item.need > 0 ? `<div style="font-size:11px;color:${below?"#fbbf24":"#94a3b8"};margin-top:2px">Min: ${item.need} · Lager: ${item.stock}</div>` : ""}
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:700;font-size:17px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${item.name}</div>
+          <div style="font-size:12px;color:#38bdf8;font-family:'Courier Prime',monospace;font-weight:700;margin-top:2px">${item.plads} · ${item.type}</div>
         </div>
-        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
-          <div style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:${below?"#fbbf24":"#f1f5f9"}">${item.stock}</div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;margin-left:12px;flex-shrink:0">
+          <button class="item-buy-btn${item.wantToBuy?' active':''}" onclick="toggleWantToBuy('${item.id}')">${item.wantToBuy?'✓ KØB':'KØB'}</button>
+          ${item.need > 0 ? `<span style="font-size:11px;color:${below?'#fbbf24':'#94a3b8'};font-family:'Courier Prime',monospace;font-weight:700">min ${item.need}</span>` : ""}
         </div>
       </div>
     </div>`;
@@ -720,12 +803,14 @@ function renderNeed() {
 function renderHistory() {
   const recent = [...inventory].sort((a,b) => new Date(b.dateTime) - new Date(a.dateTime)).slice(0,30);
   let html = `<div class="section-pad"><div class="section-note">Seneste 30 transaktioner</div>`;
-  recent.forEach(tx => {
-    const name = items.find(i => i.id === tx.itemId)?.name || "Ukendt";
-    html += `<div class="history-row">
+  recent.forEach((tx, idx) => {
+    const item = items.find(i => i.id === tx.itemId);
+    const name = item?.name || "Ukendt";
+    const plads = item?.plads || "";
+    html += `<div class="history-row ${idx%2===0?'even':'odd'}">
       <div>
         <div class="history-name">${name}</div>
-        <div class="history-date">${formatDate(tx.dateTime)}</div>
+        <div class="history-date">${formatDate(tx.dateTime)}${plads ? ` · <span style="color:#38bdf8;font-family:'Courier Prime',monospace;font-weight:700">${plads}</span>` : ""}</div>
       </div>
       <div class="history-amount" style="color:${tx.amount>0?"#34d399":"#f87171"}">${tx.amount>0?"+":""}${tx.amount}</div>
     </div>`;
@@ -736,7 +821,12 @@ function renderHistory() {
 
 // ── UI helpers ─────────────────────────────────────────────
 function setTypeFilter(t) { typeFilter = t; render(); }
-function setGroupBy(g) { groupBy = g; render(); }
+function setGroupBy(g) { groupBy = g; typeFilter = null; render(); }
+function toggleWantToBuy(itemId) {
+  items = items.map(i => i.id === itemId ? { ...i, wantToBuy: !i.wantToBuy } : i);
+  postToSheet("updateItem", { id: itemId, wantToBuy: items.find(i=>i.id===itemId)?.wantToBuy });
+  saveState(); render();
+}
 function toggleAdjust(id) { adjustModeId = adjustModeId === id ? null : id; minEditId = null; render(); }
 function toggleMinEdit(id) { minEditId = minEditId === id ? null : id; render(); }
 function toggleGroup(key) {
