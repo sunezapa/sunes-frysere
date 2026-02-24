@@ -294,6 +294,7 @@ let adjustModeId = null;
 let minEditId = null;
 let batchEditId = null;
 let batchValue = 0;
+let expandedGroup = null; // accordion — kun én åben
 let moveItemId = null;
 let settingsTab = "generelt";
 let newItemState = { amount: 1, need: 0 };
@@ -739,14 +740,15 @@ function renderOverblik() {
       Object.entries(groups).sort(([a],[b]) => a.localeCompare(b,"da")).forEach(([key, arr]) => {
         const col = groupBy === "type" ? (TYPE_COLORS[key] || "#6b7280") : "#0d2a4a";
         const total = arr.reduce((s,i) => s+i.stock, 0);
+        const isOpen = expandedGroup === key;
         html += `<button class="group-header" onclick="toggleGroup('${key}')">
           <div style="display:flex;align-items:center;gap:10px">
             <span class="group-key" style="color:${col}">${key}</span>
             <span class="group-meta">${arr.length} varer · ${total} stk</span>
           </div>
-          <span id="chevron-${key}" style="transition:transform 0.2s;color:#3a5a7a">▼</span>
+          <span id="chevron-${key}" style="transition:transform 0.2s;color:#3a5a7a;transform:${isOpen?'':'rotate(-90deg)'}">▼</span>
         </button>
-        <div id="group-${key}">`;
+        <div id="group-${key}" style="display:${isOpen?'':'none'}">`;
         arr.sort((a,b) => a.name.localeCompare(b.name,"da")).forEach(item => { html += renderItemCard(item); });
         html += `</div>`;
       });
@@ -885,9 +887,8 @@ function toggleWantToBuy(itemId) {
 function toggleAdjust(id) { adjustModeId = adjustModeId === id ? null : id; minEditId = null; batchEditId = null; render(); }
 function toggleMinEdit(id) { minEditId = minEditId === id ? null : id; render(); }
 function toggleGroup(key) {
-  const el = document.getElementById("group-" + key);
-  const ch = document.getElementById("chevron-" + key);
-  if (el) { const hidden = el.style.display === "none"; el.style.display = hidden ? "" : "none"; if (ch) ch.style.transform = hidden ? "" : "rotate(-90deg)"; }
+  expandedGroup = expandedGroup === key ? null : key;
+  render();
 }
 
 function openMoveModal(itemId) {
