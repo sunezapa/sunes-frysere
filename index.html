@@ -298,7 +298,8 @@ function loadState() {
   locations = ls.get("sf_locations", locations);
   types     = ls.get("sf_types", types);
   ageThresholds = ls.get("sf_agethresh", ageThresholds);
-  scriptUrl = ls.get("sf_script_url", SCRIPT_URL);
+  scriptUrl = SCRIPT_URL;
+  ls.set("sf_script_url", SCRIPT_URL);
   lastSync  = ls.get("sf_last_sync", null);
   syncQueue = ls.get("sf_sync_queue", []);
 }
@@ -449,7 +450,7 @@ async function syncFromSheet(url) {
 async function postToSheet(action, payload) {
   if (!scriptUrl) return;
   try {
-    const res = await fetch(scriptUrl, { method: "POST", body: JSON.stringify({ action, payload }) });
+    const res = await fetch(scriptUrl, { method: "POST", body: JSON.stringify({ action, payload }), redirect: "follow" });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const json = await res.json();
     if (!json.ok) throw new Error(json.error);
@@ -463,7 +464,7 @@ async function flushQueue() {
   if (!scriptUrl || syncQueue.length === 0) return;
   for (const op of [...syncQueue]) {
     try {
-      const res = await fetch(scriptUrl, { method: "POST", body: JSON.stringify({ action: op.action, payload: op.payload }) });
+      const res = await fetch(scriptUrl, { method: "POST", body: JSON.stringify({ action: op.action, payload: op.payload }), redirect: "follow" });
       if (!res.ok) throw new Error();
       syncQueue = syncQueue.filter(q => q._qid !== op._qid);
     } catch { break; }
