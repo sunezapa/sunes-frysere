@@ -428,10 +428,18 @@ async function syncFromSheet(url) {
     const nv = normalizeInventory(d.inventory);
     const nl = (d.locations||[]).map(r=>r["Plads"]||r["plads"]).filter(Boolean);
     const nt = (d.types||[]).map(r=>r["Type"]||r["type"]).filter(Boolean);
+    const ns = {};
+    (d.settings||[]).forEach(r => {
+      const k = r["Key"]||r["key"]; const v = r["Value"]||r["value"];
+      if (k) ns[k] = v;
+    });
     if (ni.length) items = ni;
     if (nv.length) inventory = nv;
     if (nl.length) locations = nl;
     if (nt.length) types = nt;
+    if (ns.ageGreen)  ageThresholds.green  = Number(ns.ageGreen);
+    if (ns.ageYellow) ageThresholds.yellow = Number(ns.ageYellow);
+    if (ns.ageOrange) ageThresholds.orange = Number(ns.ageOrange);
     lastSync = new Date().toISOString();
     saveState();
     showToast("Synkroniseret ✓", "positive");
@@ -882,11 +890,17 @@ function updateThreshold(key, delta) {
   if (ageThresholds.green >= ageThresholds.yellow) ageThresholds.yellow = ageThresholds.green + 30;
   if (ageThresholds.yellow >= ageThresholds.orange) ageThresholds.orange = ageThresholds.yellow + 30;
   ls.set("sf_agethresh", ageThresholds);
+  postToSheet("upsertSetting", { key: "ageGreen",  value: ageThresholds.green });
+  postToSheet("upsertSetting", { key: "ageYellow", value: ageThresholds.yellow });
+  postToSheet("upsertSetting", { key: "ageOrange", value: ageThresholds.orange });
   renderSettingsContent();
 }
 function resetThresholds() {
   ageThresholds = { green: 30, yellow: 90, orange: 180 };
   ls.set("sf_agethresh", ageThresholds);
+  postToSheet("upsertSetting", { key: "ageGreen",  value: 30 });
+  postToSheet("upsertSetting", { key: "ageYellow", value: 90 });
+  postToSheet("upsertSetting", { key: "ageOrange", value: 180 });
   renderSettingsContent();
 }
 
