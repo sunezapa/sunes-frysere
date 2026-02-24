@@ -167,7 +167,7 @@
       <button onclick="openSettings()" style="padding:6px;background:#172642;color:#94a3b8;border:1px solid #1e3a5f">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
       </button>
-      <button onclick="openAddItem()" style="padding:6px 12px;background:linear-gradient(135deg,#38bdf8,#818cf8);color:#fff;box-shadow:0 4px 15px rgba(56,189,248,0.3)">+ Vare</button>
+      <button onclick="openAddItem()" id="btn-add-item" style="padding:6px 12px;background:linear-gradient(135deg,#38bdf8,#818cf8);color:#fff;box-shadow:0 4px 15px rgba(56,189,248,0.3)">+ Vare</button>
     </div>
   </div>
   <input id="search-input" type="text" placeholder="Søg vare, plads, type..." oninput="render()">
@@ -275,8 +275,8 @@
 </div>
 
 <script>
-// TEST const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyJqdxkAwcIE9X26C1Kg2sB2Rvz65pjnNsIFRKy5GcMNDF4-Z86lXY-OHWtVip9iUok/exec";
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzVdIuX0NxW68plVebiI-1mldzlnTyuTpG0sBlTd-xNdwqiDQjloo0IoVpLUvwYJ_94tg/exec"
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyJqdxkAwcIE9X26C1Kg2sB2Rvz65pjnNsIFRKy5GcMNDF4-Z86lXY-OHWtVip9iUok/exec";
+
 // ── State ──────────────────────────────────────────────────
 let items = [];
 let inventory = [];
@@ -298,6 +298,11 @@ let moveItemId = null;
 let settingsTab = "generelt";
 let newItemState = { amount: 1, need: 0 };
 let statModal = null;
+
+// ── PIN / redaktør-tilstand ────────────────────────────────
+// Skift EDITOR_PIN + re-deploy Apps Script for at tilbagekalde adgang.
+const EDITOR_PIN = "1234";
+let isEditor = false;
 
 const TYPE_COLORS = {
   "BÆR":"#a855f7","Færdig":"#f97316","PÅLÆG":"#ec4899",
@@ -322,6 +327,9 @@ function loadState() {
   ls.set("sf_script_url", SCRIPT_URL);
   lastSync  = ls.get("sf_last_sync", null);
   syncQueue = ls.get("sf_sync_queue", []);
+  // Gendan redaktør-tilstand hvis PIN matcher
+  const savedPin = ls.get("sf_editor_pin", null);
+  isEditor = (savedPin === EDITOR_PIN);
 }
 
 function saveState() {
@@ -485,7 +493,7 @@ async function syncFromSheet(url) {
 async function postToSheet(action, payload) {
   if (!scriptUrl) return;
   try {
-    const res = await fetch(scriptUrl, { method: "POST", body: JSON.stringify({ action, payload }), redirect: "follow" });
+    const res = await fetch(scriptUrl, { method: "POST", body: JSON.stringify({ action, payload, pin: EDITOR_PIN }), redirect: "follow" });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const json = await res.json();
     if (!json.ok) throw new Error(json.error);
@@ -499,7 +507,7 @@ async function flushQueue() {
   if (!scriptUrl || syncQueue.length === 0) return;
   for (const op of [...syncQueue]) {
     try {
-      const res = await fetch(scriptUrl, { method: "POST", body: JSON.stringify({ action: op.action, payload: op.payload }), redirect: "follow" });
+      const res = await fetch(scriptUrl, { method: "POST", body: JSON.stringify({ action: op.action, payload: op.payload, pin: EDITOR_PIN }), redirect: "follow" });
       if (!res.ok) throw new Error();
       syncQueue = syncQueue.filter(q => q._qid !== op._qid);
     } catch { break; }
@@ -781,14 +789,14 @@ function renderItemCard(item) {
           ${item.ageDays !== null ? `<span class="item-age" style="color:${col}">⬤ ${ageLabel(item.ageDays)}</span>` : ""}
           <div style="flex:1"></div>
           ${item.need > 0 ? `<span class="item-min-text" style="color:${item.stock<item.need?'#fbbf24':'#94a3b8'}">min ${item.need}</span>` : ""}
-          <button class="btn-sm adjust${isAdjusting?" active":""}" onclick="toggleAdjust('${item.id}')">Juster</button>
+          ${isEditor ? `<button class="btn-sm adjust${isAdjusting?" active":""}" onclick="toggleAdjust('${item.id}')">Juster</button>` : ""}
           <button class="item-buy-btn${buyActive?' active':''}" onclick="toggleWantToBuy('${item.id}')">${buyActive?'✓ KØB':'KØB'}</button>
         </div>
       </div>
       <div class="item-actions">
-        <button class="btn-sm" onclick="openMoveModal('${item.id}')">Flyt</button>
+        ${isEditor ? `<button class="btn-sm" onclick="openMoveModal('${item.id}')">Flyt</button>` : ""}
         <span class="item-plads-tag">${item.plads}</span>
-        <span class="item-stock" style="color:${stockCol}" onclick="openBatch('${item.id}',${item.stock})" title="Klik for at justere">${item.stock}</span>
+        <span class="item-stock" style="color:${stockCol}" ${isEditor ? `onclick="openBatch('${item.id}',${item.stock})" title="Klik for at justere"` : ""} >${item.stock}</span>
       </div>
     </div>`;
 
@@ -935,7 +943,37 @@ function updateAddBtn() {
 }
 
 // ── Settings ───────────────────────────────────────────────
-function openSettings() { renderSettingsContent(); document.getElementById("modal-settings").style.display = "flex"; }
+function openSettings() {
+  renderSettingsContent();
+  document.getElementById("modal-settings").style.display = "flex";
+}
+
+function submitPin() {
+  const val = document.getElementById("si-pin")?.value || "";
+  if (val === EDITOR_PIN) {
+    isEditor = true;
+    ls.set("sf_editor_pin", val);
+    updateEditorUI();
+    renderSettingsContent();
+  } else {
+    document.getElementById("pin-error").style.display = "block";
+  }
+}
+
+function logoutEditor() {
+  isEditor = false;
+  ls.set("sf_editor_pin", null);
+  updateEditorUI();
+  renderSettingsContent();
+}
+
+function updateEditorUI() {
+  // + Vare knap
+  const addBtn = document.getElementById("btn-add-item");
+  if (addBtn) addBtn.style.display = isEditor ? "" : "none";
+  // Re-render indhold så Juster/Flyt/Min vises/skjules
+  render();
+}
 function closeSettings() { document.getElementById("modal-settings").style.display = "none"; }
 function setSettingsTab(t) {
   settingsTab = t;
@@ -947,7 +985,24 @@ function setSettingsTab(t) {
 function renderSettingsContent() {
   const el = document.getElementById("settings-content");
   if (settingsTab === "generelt") {
-    el.innerHTML = `
+    // PIN-sektion — vises altid, redaktør-indstillinger kun hvis isEditor
+    const pinSection = isEditor
+      ? `<div style="background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.25);border-radius:10px;padding:12px;margin-bottom:16px">
+           <div style="font-size:12px;color:#34d399;font-weight:700;margin-bottom:4px">✓ Redaktør aktiv</div>
+           <div style="font-size:11px;color:#475569;margin-bottom:8px">Du kan redigere og justere beholdning.</div>
+           <button onclick="logoutEditor()" style="padding:6px 12px;background:#172642;color:#f87171;border:1px solid rgba(248,113,113,0.3);border-radius:8px;font-size:12px;cursor:pointer">Log ud som redaktør</button>
+         </div>`
+      : `<div style="margin-bottom:16px">
+           <div class="settings-label">Redaktør-PIN</div>
+           <div style="display:flex;gap:8px">
+             <input class="settings-input" id="si-pin" type="password" placeholder="Indtast PIN..." style="flex:1;letter-spacing:4px" onkeydown="if(event.key==='Enter')submitPin()">
+             <button onclick="submitPin()" style="padding:10px 14px;background:#38bdf8;color:#fff;border-radius:8px;font-size:13px;cursor:pointer">OK</button>
+           </div>
+           <div id="pin-error" style="font-size:11px;color:#f87171;margin-top:5px;display:none">Forkert PIN</div>
+           <div class="settings-hint">Indtast PIN for at aktivere redigering på denne enhed.</div>
+         </div>`;
+
+    el.innerHTML = pinSection + `
       <div class="settings-label">Apps Script URL</div>
       <input class="settings-input" id="si-url" value="${scriptUrl}" placeholder="https://script.google.com/macros/s/...">
       <div class="settings-hint">URL er præ-indsat. Ret kun ved ny deploy.</div>
@@ -1060,6 +1115,7 @@ function resetThresholds() {
 
 // ── Init ───────────────────────────────────────────────────
 loadState();
+updateEditorUI();
 if (lastSync) document.getElementById("sync-status").textContent = "Synk: " + formatDate(lastSync);
 render();
 syncFromSheet(scriptUrl);
