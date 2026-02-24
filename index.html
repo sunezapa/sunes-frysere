@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="da">
 <head>
+<!-- ============================================================
+     KONFIGURATION — ret her ved ny deploy eller ny version
+     ============================================================ -->
+<script>
+const SCRIPT_URL  = "https://script.google.com/macros/s/AKfycbyJqdxkAwcIE9X26C1Kg2sB2Rvz65pjnNsIFRKy5GcMNDF4-Z86lXY-OHWtVip9iUok/exec";
+const APP_VERSION = "v41";
+const EDITOR_PIN  = "1234";
+</script>
+<!-- ============================================================ -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -146,7 +155,7 @@
 
 <div id="header">
   <div id="header-top">
-    <div id="header-title" style="cursor:pointer" onclick="setView('overblik')">
+    <div id="header-title" style="cursor:pointer" onclick="setView('overblik');document.getElementById('search-input').value='';render()">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round">
         <line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/>
         <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/><line x1="19.07" y1="4.93" x2="4.93" y2="19.07"/>
@@ -174,7 +183,7 @@
 <div id="toast"></div>
 
 <div id="bottom-nav">
-  <button class="nav-btn active" id="nav-overblik" onclick="setView('overblik')">
+  <button class="nav-btn active" id="nav-overblik" onclick="setView('overblik');document.getElementById('search-input').value='';render()">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
     Overblik
   </button>
@@ -269,7 +278,7 @@
 </div>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyJqdxkAwcIE9X26C1Kg2sB2Rvz65pjnNsIFRKy5GcMNDF4-Z86lXY-OHWtVip9iUok/exec";
+
 
 // ── State ──────────────────────────────────────────────────
 let items = [];
@@ -296,7 +305,7 @@ let openGroupKey = null;
 
 // ── PIN / redaktør-tilstand ────────────────────────────────
 // Skift EDITOR_PIN + re-deploy Apps Script for at tilbagekalde adgang.
-const EDITOR_PIN = "1234";
+
 let isEditor = false;
 
 const TYPE_COLORS = {
@@ -648,30 +657,9 @@ function render() {
 function renderOverblik() {
   const enriched = getEnrichedItems();
   const search = document.getElementById("search-input")?.value.toLowerCase() || "";
-  const totalItems = enriched.length;
-  const totalStock = enriched.reduce((s,i) => s + i.stock, 0);
-  const emptyCount = enriched.filter(i => i.stock === 0).length;
-  const needCount  = enriched.filter(i => i.need > 0 && i.stock < i.need).length;
 
   // Stat-kort (4 på én linje)
-  let html = `<div class="stat-row">
-    <button class="stat-card" onclick="setView('overblik')" style="cursor:pointer;border:none">
-      <div class="stat-label">Varer</div>
-      <div class="stat-val" style="color:#38bdf8">${totalItems}</div>
-    </button>
-    <button class="stat-card" onclick="setView('history')" style="cursor:pointer;border:none">
-      <div class="stat-label">Stk</div>
-      <div class="stat-val" style="color:#34d399">${totalStock}</div>
-    </button>
-    <button class="stat-card${statModal==='tomme'?' active':''}" onclick="setStatModal('tomme')">
-      <div class="stat-label">Tomme</div>
-      <div class="stat-val" style="color:${emptyCount>0?'#f87171':'#c8daf0'}">${emptyCount}</div>
-    </button>
-    <button class="stat-card${statModal==='mangler'?' active':''}" onclick="setStatModal('mangler')">
-      <div class="stat-label">Mangler</div>
-      <div class="stat-val" style="color:${needCount>0?'#fbbf24':'#c8daf0'}">${needCount}</div>
-    </button>
-  </div>`;
+  let html = renderStatRow();
 
   // Filter-chips: plads-chips normalt, type-chips ved groupBy=type
   let source = enriched.filter(i => i.stock > 0);
@@ -880,9 +868,36 @@ function renderNeed() {
   return html;
 }
 
+function renderStatRow() {
+  const enriched = getEnrichedItems();
+  const totalItems = enriched.length;
+  const totalStock = enriched.reduce((s,i) => s + i.stock, 0);
+  const emptyCount = enriched.filter(i => i.stock === 0).length;
+  const needCount  = enriched.filter(i => i.need > 0 && i.stock < i.need).length;
+  return `<div class="stat-row">
+    <button class="stat-card" onclick="setView('overblik');document.getElementById('search-input').value='';render()" style="cursor:pointer;border:none">
+      <div class="stat-label">Varer</div>
+      <div class="stat-val" style="color:#38bdf8">${totalItems}</div>
+    </button>
+    <button class="stat-card" onclick="setView('history')" style="cursor:pointer;border:none">
+      <div class="stat-label">Stk</div>
+      <div class="stat-val" style="color:#34d399">${totalStock}</div>
+    </button>
+    <button class="stat-card${statModal==='tomme'?' active':''}" onclick="setView('overblik');setStatModal('tomme')">
+      <div class="stat-label">Tomme</div>
+      <div class="stat-val" style="color:${emptyCount>0?'#f87171':'#c8daf0'}">${emptyCount}</div>
+    </button>
+    <button class="stat-card${statModal==='mangler'?' active':''}" onclick="setView('overblik');setStatModal('mangler')">
+      <div class="stat-label">Mangler</div>
+      <div class="stat-val" style="color:${needCount>0?'#fbbf24':'#c8daf0'}">${needCount}</div>
+    </button>
+  </div>`;
+}
+
 function renderHistory() {
   const recent = [...inventory].sort((a,b) => new Date(b.dateTime) - new Date(a.dateTime)).slice(0,50);
-  let html = `<div class="section-pad"><div class="section-note">Seneste 50 transaktioner</div>`;
+  let html = renderStatRow();
+  html += `<div class="section-pad"><div class="section-note">Seneste 50 transaktioner</div>`;
   recent.forEach((tx, idx) => {
     const item = items.find(i => i.id === tx.itemId);
     const name = item?.name || "Ukendt";
@@ -1030,6 +1045,9 @@ function renderSettingsContent() {
         <div style="font-size:13px;color:#f1f5f9;margin-bottom:4px">Sidst synkroniseret: <span style="color:#38bdf8">${lastSync ? formatDate(lastSync) : "Aldrig"}</span></div>
         ${syncQueue.length > 0 ? `<div style="font-size:13px;color:#fbbf24;margin-bottom:8px">${syncQueue.length} afventende i offline-kø</div>` : ""}
         <button class="btn-primary" onclick="syncFromSheet()">Synkroniser nu</button>
+      </div>
+      <div style="margin-top:20px;padding-top:16px;border-top:1px solid #1e3a5f;font-size:13px;color:#7090a8">
+        Sunes Frysere <span style="font-family:'Courier Prime',monospace;color:#38bdf8">${APP_VERSION}</span>
       </div>`;
   } else if (settingsTab === "pladser") {
     let rows = locations.map(loc => {
