@@ -6,7 +6,7 @@
      ============================================================ -->
 <script>
 const SCRIPT_URL  = "https://script.google.com/macros/s/AKfycbyJqdxkAwcIE9X26C1Kg2sB2Rvz65pjnNsIFRKy5GcMNDF4-Z86lXY-OHWtVip9iUok/exec";
-const APP_VERSION = "v45";
+const APP_VERSION = "v46";
 const EDITOR_PIN  = "1234";
 </script>
 <!-- ============================================================ -->
@@ -687,7 +687,11 @@ function renderOverblik() {
     types.forEach(t => {
       const col = TYPE_COLORS[t] || "#6b7280";
       const isActive = typeFilter === t;
-      html += `<button class="type-chip${isActive?' active':''}" style="${isActive?`background:${col};border-color:${col}`:'border-color:#2a4a6e'}" onclick="setTypeFilter('${t}')">${t}</button>`;
+      const count = source.filter(i => i.type === t).length;
+      const isEmpty = count === 0;
+      const label = isEmpty ? `${t}` : `${t} <span style="font-size:11px;opacity:0.75">(${count})</span>`;
+      const emptyStyle = isEmpty ? 'color:#4a6080;border-color:#1e3a5f;' : '';
+      html += `<button class="type-chip${isActive?' active':''}" style="${isActive?`background:${col};border-color:${col}`:`border-color:#2a4a6e;${emptyStyle}`}" onclick="setTypeFilter('${t}')">${label}</button>`;
     });
   } else {
     usedLocations.forEach(loc => {
