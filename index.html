@@ -6,7 +6,7 @@
      ============================================================ -->
 <script>
 const SCRIPT_URL  = "https://script.google.com/macros/s/AKfycbyJqdxkAwcIE9X26C1Kg2sB2Rvz65pjnNsIFRKy5GcMNDF4-Z86lXY-OHWtVip9iUok/exec";
-const APP_VERSION = "v46";
+const APP_VERSION = "v47";
 const EDITOR_PIN  = "1234";
 </script>
 <!-- ============================================================ -->
@@ -321,29 +321,39 @@ const ls = {
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
 };
 
+function migrateStorage() {
+  // Ryd gamle sf_-nøgler én gang, så de ikke forurener andre apps
+  const OLD_KEYS = ["sf_items","sf_inventory","sf_locations","sf_types","sf_agethresh","sf_last_sync","sf_sync_queue","sf_editor_pin","sf_script_url"];
+  if (!localStorage.getItem("frysere_migrated_v47")) {
+    OLD_KEYS.forEach(k => localStorage.removeItem(k));
+    localStorage.setItem("frysere_migrated_v47", "1");
+  }
+}
+
 function loadState() {
-  items     = ls.get("sf_items", []);
-  inventory = ls.get("sf_inventory", []);
-  locations = ls.get("sf_locations", locations);
-  types     = ls.get("sf_types", types);
-  ageThresholds = ls.get("sf_agethresh", ageThresholds);
+  migrateStorage();
+  items     = ls.get("frysere_items", []);
+  inventory = ls.get("frysere_inventory", []);
+  locations = ls.get("frysere_locations", locations);
+  types     = ls.get("frysere_types", types);
+  ageThresholds = ls.get("frysere_agethresh", ageThresholds);
   scriptUrl = SCRIPT_URL;
-  ls.set("sf_script_url", SCRIPT_URL);
-  lastSync  = ls.get("sf_last_sync", null);
-  syncQueue = ls.get("sf_sync_queue", []);
+  ls.set("frysere_script_url", SCRIPT_URL);
+  lastSync  = ls.get("frysere_last_sync", null);
+  syncQueue = ls.get("frysere_sync_queue", []);
   // Gendan redaktør-tilstand hvis PIN matcher
-  const savedPin = ls.get("sf_editor_pin", null);
+  const savedPin = ls.get("frysere_editor_pin", null);
   isEditor = (savedPin === EDITOR_PIN);
 }
 
 function saveState() {
-  ls.set("sf_items", items);
-  ls.set("sf_inventory", inventory);
-  ls.set("sf_locations", locations);
-  ls.set("sf_types", types);
-  ls.set("sf_agethresh", ageThresholds);
-  ls.set("sf_last_sync", lastSync);
-  ls.set("sf_sync_queue", syncQueue);
+  ls.set("frysere_items", items);
+  ls.set("frysere_inventory", inventory);
+  ls.set("frysere_locations", locations);
+  ls.set("frysere_types", types);
+  ls.set("frysere_agethresh", ageThresholds);
+  ls.set("frysere_last_sync", lastSync);
+  ls.set("frysere_sync_queue", syncQueue);
 }
 
 // ── Normalisering ──────────────────────────────────────────
@@ -505,7 +515,7 @@ async function postToSheet(action, payload) {
     if (!json.ok) throw new Error(json.error);
   } catch {
     syncQueue.push({ action, payload, _qid: generateId() });
-    ls.set("sf_sync_queue", syncQueue);
+    ls.set("frysere_sync_queue", syncQueue);
   }
 }
 
@@ -518,7 +528,7 @@ async function flushQueue() {
       syncQueue = syncQueue.filter(q => q._qid !== op._qid);
     } catch { break; }
   }
-  ls.set("sf_sync_queue", syncQueue);
+  ls.set("frysere_sync_queue", syncQueue);
 }
 
 // ── Actions ────────────────────────────────────────────────
@@ -1021,7 +1031,7 @@ function submitPin() {
   const val = document.getElementById("si-pin")?.value || "";
   if (val === EDITOR_PIN) {
     isEditor = true;
-    ls.set("sf_editor_pin", val);
+    ls.set("frysere_editor_pin", val);
     updateEditorUI();
     renderSettingsContent();
   } else {
@@ -1031,7 +1041,7 @@ function submitPin() {
 
 function logoutEditor() {
   isEditor = false;
-  ls.set("sf_editor_pin", null);
+  ls.set("frysere_editor_pin", null);
   updateEditorUI();
   renderSettingsContent();
 }
@@ -1136,7 +1146,7 @@ function renderSettingsContent() {
 function saveScriptUrl() {
   const url = document.getElementById("si-url")?.value.trim();
   if (!url) return;
-  scriptUrl = url; ls.set("sf_script_url", url);
+  scriptUrl = url; ls.set("frysere_script_url", url);
   showToast("Script URL gemt", "positive");
   syncFromSheet(url);
 }
@@ -1174,7 +1184,7 @@ function updateThreshold(key, delta) {
   if (key==="yellow" && ageThresholds.yellow >= ageThresholds.orange) ageThresholds.orange = ageThresholds.yellow + 30;
   if (key==="yellow" && ageThresholds.yellow <= ageThresholds.green)  ageThresholds.green  = ageThresholds.yellow - 30;
   if (key==="orange" && ageThresholds.orange <= ageThresholds.yellow) ageThresholds.yellow = ageThresholds.orange - 30;
-  ls.set("sf_agethresh", ageThresholds);
+  ls.set("frysere_agethresh", ageThresholds);
   postToSheet("upsertSetting", { key: "ageGreen",  value: ageThresholds.green });
   postToSheet("upsertSetting", { key: "ageYellow", value: ageThresholds.yellow });
   postToSheet("upsertSetting", { key: "ageOrange", value: ageThresholds.orange });
@@ -1182,7 +1192,7 @@ function updateThreshold(key, delta) {
 }
 function resetThresholds() {
   ageThresholds = { green: 30, yellow: 90, orange: 180 };
-  ls.set("sf_agethresh", ageThresholds);
+  ls.set("frysere_agethresh", ageThresholds);
   postToSheet("upsertSetting", { key: "ageGreen",  value: 30 });
   postToSheet("upsertSetting", { key: "ageYellow", value: 90 });
   postToSheet("upsertSetting", { key: "ageOrange", value: 180 });
